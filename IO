@@ -1,0 +1,125 @@
+import java.io.*;
+public class TOTest {
+	public static void main(String args[]) throws Exception
+	{
+		test testIO = new test();
+		testIO.mkDir("F:\\IO\\TEST1012");
+		testIO.showFileList("");
+		testIO.traverseFile("F:\\informationSystem\\IO\\");
+		testIO.copyFile();
+		testIO.copyFileByReader();
+	}
+	/**
+	 * 创建目录
+	 * @param path
+	 */
+	public void mkDir(String path) {
+		File dir = new File(path);
+		if(dir.mkdir())
+			System.out.println("目录创建成功");
+		else
+			System.out.println("目录创建失败");
+	}
+	/**
+	 * 浏览当前目录下的所有文件
+	 */
+	public void showFileList(String paths) {
+		try {
+			File f = new File(paths); // 获取当前目录的引用
+			String absPath = f.getAbsolutePath(); // 获取绝对路径
+			System.out.println(absPath);
+			File path = new File(absPath); // 获取文件所在目录的引用
+			if(path.isDirectory()) {
+				File[] files = path.listFiles(); // 获取当前路径之下所有的文件
+				for(int i=0; i < files.length; i++) {
+					if(files[i].isDirectory()) {
+						System.out.println("目录是" + files[i].getName());
+					} else {
+						System.out.println("文件是" + files[i].getName());
+					}
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 *  
+	 *  递归便利所有文件
+	 */
+	public void traverseFile(String path)
+	{
+		File file = new File(path);
+		if(file.exists()) { // 有文件
+			File[] files = file.listFiles(); // 获取该路径之下的所有文件和目录
+			if(files.length == 0) {
+				System.out.println("文件夹为空");
+				return;
+			} else {
+				for(File child : files) { // 遍历该文件夹之下的所有文件和目录
+					if(child.isDirectory()) {
+						System.out.println("文件夹是: " + child.getAbsolutePath());
+						this.traverseFile(child.getAbsolutePath()); // 递归调用
+					} else {
+						System.out.println("文件是: " + child.getAbsolutePath());
+					}
+				}
+			}
+		} else {
+			System.out.println("文件不存在！！");
+		}
+	}
+	/**
+	 * 输入输出流
+	 * @throws Exception
+	 */
+	public void copyFile() throws Exception
+	{
+		File inFile = new File("IO.png"); // 源数据
+		File outFile = new File("newIO.png"); // 目标数据
+		FileInputStream inStream = new FileInputStream(inFile); // 输入流  参数是数据的引用
+		FileOutputStream outStream = new FileOutputStream(outFile); // 输出流 参数是数据的引用
+		byte[] inOutb = new byte[inStream.available()]; // 输入流的字节长度
+		inStream.read(inOutb); // 输入到管道中
+		outStream.write(inOutb); // 从管道写入到文件中
+		inStream.close(); // 关闭
+		outStream.close(); // 关闭
+	}
+	public void copyFileByReader() 
+	{
+		FileReader fin = null;
+		FileWriter fout = null;;
+		try {
+			fin = new FileReader("newIO.png");
+			fout = new FileWriter("newIOByWriter.png");
+			char[] ch = new char[1024];
+			int length = 0;
+			while((length = fin.read(ch)) != -1)
+				fout.write(ch, 0, length);
+			if(fout != null)
+				this.echo("文件复制成功");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				fin.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				fout.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}		
+	}
+	public void echo(String str) {
+		System.out.println(str);
+	}
+}
